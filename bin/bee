@@ -29,7 +29,12 @@ if ($dump_key) {
 
 =head1 SYNOPSIS
 
+  # To get all keys
   $ bee test.bee
+
+  # To print one key (after deparsing via Data::MessagePack::Stream)
+  $ bee test.bee sample_key
+  $ bee test.bee gzipped_sample_value | gunzip -c
 
 =head1 DESCRIPTION
 
