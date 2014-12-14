@@ -8,7 +8,6 @@ use Data::MessagePack::Stream;
 use Carp qw( croak );
 use bytes;
 use Exporter 'import';
-use IO::String;
 
 our @EXPORT_OK = qw( beepack bunpack );
 
