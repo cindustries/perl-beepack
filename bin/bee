@@ -42,13 +42,13 @@ if ($dump_key) {
 
 IRC
 
-  Join #vonbienenstock on irc.freenode.net. Highlight Getty for fast reaction :).
+  Join #vonBienenstock on irc.freenode.net. Highlight Getty for fast reaction :).
 
 Repository
 
-  http://github.com/Getty/p5-app-tcpproxy
+  http://github.com/Getty/p5-beepack
   Pull request and additional contributors are welcome
 
 Issue Tracker
 
-  http://github.com/Getty/p5-app-tcpproxy/issues
+  http://github.com/Getty/p5-beepack/issues
