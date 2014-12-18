@@ -46,7 +46,7 @@ has nil_exists => (
   is => 'lazy',
 );
 
-sub _build_nil_exists { 1 }
+sub _build_nil_exists { 0 }
 
 has readonly => (
   is => 'lazy',
@@ -140,6 +140,7 @@ sub set_nil {
 sub exists {
   my ( $self, $key ) = @_;
   return 0 unless $self->cdb->exists($key);
+  return $self->cdb->exists($key) if $self->nil_exists;
   my $msgpack = $self->cdb->get($key);
   my $value = $self->data_messagepack->unpack($msgpack);
   return defined $value ? 1 : 0;
@@ -175,7 +176,9 @@ sub save {
   # read only opening, error if fail
   my $beepack_ro = BeePack->open('my.bee');
   # read/write opening (with temp file), create if missing
-  my $beepack_rw = BeePack->open('my.bee','my.bee.'.$$);
+  my $beepack_rw = BeePack->open('my.bee', 'my.bee.'.$$);
+  # read only opening with nil_exists set
+  my $beepack_ro = BeePack->open('my.bee', undef, nil_exists => 0);
 
   $beepack_rw->set( key => $value ); # overwrite value
 
@@ -218,7 +221,9 @@ reinvent the wheel of storing interoperational values (like B<BeePack> generated
 on a Linux machine with x86 while being read by a microcontroller with ARM).
 
 For simplification we do NOT store several values for a key inside the B<CDB>,
-which is a capability of B<CDB>.
+which is a capability of B<CDB>. By default B<BeePack> is saying a key that has a
+nil value doesn't exist. You can deactivate this behaviour by setting the
+B<nil_exists> attribute to B<0> on B<open>.
 
 We also simplify the implementation of B<MsgPack> inside the B<BeePack> with
 not allowing specific types in there. Because of the usage of L<Data::MessagePack>
