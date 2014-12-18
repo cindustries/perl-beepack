@@ -62,9 +62,7 @@ has data_messagepack => (
   init_arg => undef,
 );
 
-sub _build_data_messagepack {
-  Data::MessagePack->new->canonical->utf8
-}
+sub _build_data_messagepack { Data::MessagePack->new->canonical->utf8 }
 
 sub BUILD {
   my ( $self ) = @_;
@@ -84,13 +82,18 @@ sub open {
 
 sub set {
   my ( $self, $key, $value ) = @_;
-  croak("Trying to set on readonly BeePack") if $self->readonly;
+  $self->readonly_check;
   $self->cdb->put_replace($key,$self->data_messagepack->pack($value));
+}
+
+sub readonly_check {
+  my ( $self ) = @_;  
+  croak("Trying to set on readonly BeePack") if $self->readonly;
 }
 
 sub set_type {
   my ( $self, $key, $type, $value ) = @_;
-  croak("Trying to set on readonly BeePack") if $self->readonly;
+  $self->readonly_check;
   my $t = defined $type ? substr($type,0,1) : '';
   if ($t eq 'i') {
     $self->set_integer($key,$value);
@@ -176,22 +179,32 @@ sub save {
 
   $beepack_rw->set( key => $value ); # overwrite value
 
-  $beepack_rw->set_integer( key => $value ); # force integer
-  $beepack_rw->set_bool( key => $value ); # force bool
-  $beepack_rw->set_string( key => $value ); # force stringification
-  $beepack_rw->set_nil( 'key' ); # set nil value
+  $beepack_rw->set_integer( key => $value );   # force integer
+  $beepack_rw->set_type( key => i => $value ); # alternative way
+  $beepack_rw->set_bool( key => $value );      # force bool
+  $beepack_rw->set_type( key => b => $value ); # alternative way
+  $beepack_rw->set_string( key => $value );    # force stringification
+  $beepack_rw->set_type( key => s => $value ); # alternative way
+  $beepack_rw->set_nil( 'key' );       # set nil value
+  $beepack_rw->set_type( key => 'n' ); # alternative way
 
+  # array of 2 true bool
   $beepack_rw->set( key => [
     BeePack->true, BeePack->true,
-  ]); # array of 2 true bool
+  ]);
+
+  # hash with true and false bool
   $beepack_rw->set( key => {
     false => BeePack->false,
     true => BeePack->true,
-  }); # hash with true and false bool
+  });
 
   $beepack_rw->save; # save changes and reopen
 
   my $value = $beepack_ro->get('key');
+
+  # getting the raw msgpack bytes
+  my $msgpack = $beepack_ro->get_raw('key');
 
 =head1 DESCRIPTION
 
@@ -214,7 +227,12 @@ excluding are also those you can't get out of L<Data::MessagePack>, so the Perl
 implementation is anyway not capable of adding them to the B<BeePack>. The C
 implementation will be getting strict on this.
 
+This distribution includes L<bee>, which is a little tool to read, generate and
+manipulate B<BeePack> from the comandline.
+
 =head1 SEE ALSO
+
+=head2 L<bee>
 
 =head2 L<CDB::TinyCDB>
 
