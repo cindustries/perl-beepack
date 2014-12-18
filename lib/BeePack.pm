@@ -18,7 +18,6 @@ has cdb => (
   init_arg => undef,
   handles => [qw(
     keys
-    exists
   )],
 );
 
@@ -42,6 +41,12 @@ has tempfile => (
   is => 'ro',
   predicate => 1,
 );
+
+has nil_exists => (
+  is => 'lazy',
+);
+
+sub _build_nil_exists { 1 }
 
 has readonly => (
   is => 'lazy',
@@ -69,10 +74,11 @@ sub BUILD {
 }
 
 sub open {
-  my ( $class, $filename, $tempfile ) = @_;
+  my ( $class, $filename, $tempfile, %attr ) = @_;
   return $class->new(
     filename => $filename,
     defined $tempfile ? ( tempfile => $tempfile ) : (),
+    %attr,
   );
 }
 
@@ -103,6 +109,14 @@ sub set_string {
 sub set_nil {
   my ( $self, $key ) = @_;
   $self->set($key, undef);
+}
+
+sub exists {
+  my ( $self, $key ) = @_;
+  return 0 unless $self->cdb->exists($key);
+  my $msgpack = $self->cdb->get($key);
+  my $value = $self->data_messagepack->unpack($msgpack);
+  return defined $value ? 1 : 0;
 }
 
 sub get {
@@ -168,7 +182,7 @@ storing interoperational values (like B<BeePack> generated on a Linux machine
 with x86 while being read by a microcontroller with ARM).
 
 For simplification we do NOT store several values for a key inside the B<CDB>,
-which is a capability of B<CDB> (see )
+which is a capability of B<CDB>
 
 =head1 SEE ALSO
 
