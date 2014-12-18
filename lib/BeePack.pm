@@ -105,7 +105,7 @@ sub set_type {
     $self->set($key,\@array);
   } elsif ($t eq 'h') {
     my %hash = %{$value};
-    $self->set($key,\%array);
+    $self->set($key,\%hash);
   } elsif ($t eq '') {
     $self->set($key,$value);
   }
