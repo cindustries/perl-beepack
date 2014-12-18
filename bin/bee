@@ -4,37 +4,6 @@
 
 use strict;
 use warnings;
-use Path::Tiny;
-use BeePack qw( beepack bunpack );
-
-my $filename = shift @ARGV;
-my %data = bunpack(scalar path($filename)->slurp_raw);
-
-my $dump_key = shift @ARGV;
-
-if ($dump_key) {
-  print $data{$dump_key};
-} else {
-  my $all = 0;
-  my $count = 0;
-  for my $key (sort { $a cmp $b } keys %data) {
-    my $size = length($data{$key});
-    $all += $size;
-    $count += 1;
-    printf("% 8d | %s\n",$size,$key);
-  }
-  print(('-' x 9).'+'.('-' x 20)."\n");
-  printf("% 8d | %d %s\n",$all,$count,$count == 1 ? 'entry' : 'entries');
-}
-
-=head1 SYNOPSIS
-
-  # To get all keys
-  $ bee test.bee
-
-  # To print one key (after deparsing via Data::MessagePack::Stream)
-  $ bee test.bee sample_key
-  $ bee test.bee gzipped_sample_value | gunzip -c
 
 =head1 DESCRIPTION
 
