@@ -199,13 +199,20 @@ B<BeePack> is made out of the requirement to encapsule small key values and
 giant binary blobs into a compact file format for exchange and easy update
 even with the low amount of microcontroller memory.
 
-Technical B<BeePack> is B<CDB> which uses B<MsgPack> for storing the values.
-We picked B<MsgPack> for the inner storage, to not reinvent the wheel of
-storing interoperational values (like B<BeePack> generated on a Linux machine
-with x86 while being read by a microcontroller with ARM).
+Technical B<BeePack> is B<CDB> with additionally using B<MsgPack> for storing
+the values inside the B<CDB>. We picked B<MsgPack> for the inner storage, to not
+reinvent the wheel of storing interoperational values (like B<BeePack> generated
+on a Linux machine with x86 while being read by a microcontroller with ARM).
 
 For simplification we do NOT store several values for a key inside the B<CDB>,
-which is a capability of B<CDB>
+which is a capability of B<CDB>.
+
+We also simplify the implementation of B<MsgPack> inside the B<BeePack> with
+not allowing specific types in there. Because of the usage of L<Data::MessagePack>
+this implementation will still flawless read them, while all types we are
+excluding are also those you can't get out of L<Data::MessagePack>, so the Perl
+implementation is anyway not capable of adding them to the B<BeePack>. The C
+implementation will be getting strict on this.
 
 =head1 SEE ALSO
 
