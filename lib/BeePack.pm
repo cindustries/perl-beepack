@@ -63,7 +63,7 @@ has data_messagepack => (
 );
 
 sub _build_data_messagepack {
-  Data::MessagePack->new->canonical->utf8->prefer_integer
+  Data::MessagePack->new->canonical->utf8
 }
 
 sub BUILD {
@@ -84,8 +84,31 @@ sub open {
 
 sub set {
   my ( $self, $key, $value ) = @_;
-  croak("Trying to set on readonly BeePack ".$self->filename) if $self->readonly;
+  croak("Trying to set on readonly BeePack") if $self->readonly;
   $self->cdb->put_replace($key,$self->data_messagepack->pack($value));
+}
+
+sub set_type {
+  my ( $self, $key, $type, $value ) = @_;
+  croak("Trying to set on readonly BeePack") if $self->readonly;
+  my $t = defined $type ? substr($type,0,1) : '';
+  if ($t eq 'i') {
+    $self->set_integer($key,$value);
+  } elsif ($t eq 'b') {
+    $self->set_bool($key,$value);
+  } elsif ($t eq 's') {
+    $self->set_string($key,$value);
+  } elsif ($t eq 'n') {
+    $self->set_nil($key,$value);
+  } elsif ($t eq 'a') {
+    my @array = @{$value};
+    $self->set($key,\@array);
+  } elsif ($t eq 'h') {
+    my %hash = %{$value};
+    $self->set($key,\%array);
+  } elsif ($t eq '') {
+    $self->set($key,$value);
+  }
 }
 
 sub set_integer {
