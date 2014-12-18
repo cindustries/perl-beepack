@@ -178,7 +178,7 @@ sub save {
   # read/write opening (with temp file), create if missing
   my $beepack_rw = BeePack->open('my.bee', 'my.bee.'.$$);
   # read only opening with nil_exists set
-  my $beepack_ro = BeePack->open('my.bee', undef, nil_exists => 0);
+  my $beepack_ro = BeePack->open('my.bee', undef, nil_exists => 1 );
 
   $beepack_rw->set( key => $value ); # overwrite value
 
@@ -223,7 +223,7 @@ on a Linux machine with x86 while being read by a microcontroller with ARM).
 For simplification we do NOT store several values for a key inside the B<CDB>,
 which is a capability of B<CDB>. By default B<BeePack> is saying a key that has a
 nil value doesn't exist. You can deactivate this behaviour by setting the
-B<nil_exists> attribute to B<0> on B<open>.
+B<nil_exists> attribute to B<1> on B<open>.
 
 We also simplify the implementation of B<MsgPack> inside the B<BeePack> with
 not allowing specific types in there. Because of the usage of L<Data::MessagePack>
