@@ -247,13 +247,13 @@ manipulate B<BeePack> from the comandline.
 
 IRC
 
-  Join #vonBienenstock on irc.freenode.net. Highlight Getty for fast reaction :).
+  Join #hardware on irc.perl.org. Highlight Getty for fast reaction :).
 
 Repository
 
-  http://github.com/vonBienenstock/p5-beepack
+  http://github.com/cindustries/perl-beepack
   Pull request and additional contributors are welcome
 
 Issue Tracker
 
-  http://github.com/vonBienenstock/p5-beepack/issues
+  http://github.com/cindustries/perl-beepack/issues
